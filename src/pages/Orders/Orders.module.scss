@@ -1,0 +1,99 @@
+.page {
+  background: #f8fafc;
+  min-height: 100vh;
+}
+
+.container {
+  max-width: 1100px;
+  margin: auto;
+  padding: 40px 20px;
+}
+
+.heading {
+  font-size: 26px;
+  font-weight: 600;
+  margin-bottom: 24px;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.card {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 16px;
+  background: white;
+  border-radius: 14px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
+}
+
+.image {
+  width: 100px;
+  height: 100px;
+  object-fit: contain;
+}
+
+.details {
+  flex: 1;
+
+  h3 {
+    font-size: 18px;
+    margin-bottom: 6px;
+  }
+}
+
+.meta {
+  font-size: 14px;
+  color: #64748b;
+}
+
+.date {
+  font-size: 13px;
+  color: #94a3b8;
+}
+
+.address {
+  font-size: 13px;
+  margin-top: 6px;
+}
+
+.right {
+  text-align: right;
+}
+
+.status {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.created {
+  background: #e0f2fe;
+  color: #0284c7;
+}
+
+.pending {
+  background: #fef3c7;
+  color: #d97706;
+}
+
+.completed {
+  background: #dcfce7;
+  color: #16a34a;
+}
+
+.cancelled {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.empty {
+  text-align: center;
+  padding: 40px;
+  color: #64748b;
+}

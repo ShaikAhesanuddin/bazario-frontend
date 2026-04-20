@@ -1,0 +1,52 @@
+.page {
+  background: #f8fafc;
+  min-height: 100vh;
+}
+
+.loaderWrapper {
+  display: flex;
+  justify-content: center;
+  margin-top: 80px;
+}
+
+
+.content {
+  padding: 24px 32px;
+}
+
+
+.heading {
+  font-size: 22px;
+  font-weight: 600;
+  color: #0f172a;
+  margin-bottom: 20px;
+}
+
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 20px;
+}
+
+
+.emptyContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 70vh;
+  text-align: center;
+}
+
+.image {
+  width: 260px;
+  opacity: 0.85;
+  margin-bottom: 16px;
+}
+
+.text {
+  color: #64748b;
+  font-size: 18px;
+  font-weight: 500;
+}
