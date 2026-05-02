@@ -1,5 +1,5 @@
 [[redirects]]
-  from = "/api/*"
+  from = "/api/v1/*"
   to = "http://bazario-public-alb-87745543.ap-south-1.elb.amazonaws.com/api/v1/:splat"
   status = 200
   force = true
