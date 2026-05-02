@@ -42,16 +42,16 @@ function Orders() {
           <div className={styles.list}>
             {orders.map((order) => (
               <div key={order.orderId} className={styles.card}>
-                
-                
+
+
                 <img
-                  src={order.product.imageUrl}
-                  alt={order.product.name}
+                  src={order.product?.imageUrl || "/placeholder.png"}
+                  alt={order.product?.name || "Product"}
                   className={styles.image}
                 />
 
                 <div className={styles.details}>
-                  <h3>{order.product.name}</h3>
+                  <h3>{order.product?.name || "Unknown Product"}</h3>
 
                   <p className={styles.meta}>
                     Qty: {order.quantity} • ₹{order.totalAmount}
@@ -63,15 +63,20 @@ function Orders() {
                   </p>
 
                   <div className={styles.address}>
-                    {order.address.street}, {order.address.city}
+                    {order.address ? (
+                      <>
+                        {order.address.street}, {order.address.city}
+                      </>
+                    ) : (
+                      "Address unavailable"
+                    )}
                   </div>
                 </div>
 
                 <div className={styles.right}>
                   <span
-                    className={`${styles.status} ${
-                      styles[order.orderStatus.toLowerCase()]
-                    }`}
+                    className={`${styles.status} ${styles[order.orderStatus.toLowerCase()]
+                      }`}
                   >
                     {order.orderStatus}
                   </span>
