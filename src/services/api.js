@@ -2,7 +2,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 
 const api = axios.create({
-    baseURL: "http://bazario-public-alb-87745543.ap-south-1.elb.amazonaws.com/api/v1",
+    baseURL: "/api"
 });
 
 api.interceptors.request.use((config) => {
