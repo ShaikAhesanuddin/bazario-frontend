@@ -29,15 +29,21 @@ function AddressSection({ selectable = false, onSelect }) {
   });
 
   const fetchAddresses = async () => {
-    try {
-      const res = await getAddresses();
-      setAddresses(res.data || []);
-    } catch {
+  try {
+    const res = await getAddresses();
+
+    setAddresses(res.data || []);
+  } catch (err) {
+
+    if (err.response?.status !== 404) {
       toast.error("Failed to load addresses");
-    } finally {
-      setLoading(false);
     }
-  };
+
+    setAddresses([]);
+  } finally {
+    setLoading(false);
+  }
+};
 
   useEffect(() => {
     fetchAddresses();
