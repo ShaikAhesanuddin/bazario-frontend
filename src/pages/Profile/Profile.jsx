@@ -10,37 +10,56 @@ import Loader from "../../components/common/Loader/Loader";
 import { toast } from "react-toastify";
 import AddressSection from "./AddressSection";
 import styles from "./Profile.module.scss";
-import Footer from "../../components/layout/Footer/Footer"; 
+import Footer from "../../components/layout/Footer/Footer";
+
+const getErrorMessage = (err) => {
+  if (typeof err.response?.data === "string") {
+    return err.response.data;
+  }
+
+  return (
+    err.response?.data?.message ||
+    err.response?.data?.error ||
+    err.message ||
+    "Something went wrong"
+  );
+};
 
 function Profile() {
-  const { user, logout } = useContext(AuthContext);
+  const { logout } = useContext(AuthContext);
 
   const [form, setForm] = useState({});
   const [loading, setLoading] = useState(true);
+
+  const [updating, setUpdating] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     const fetch = async () => {
       try {
         const res = await getMyProfile();
-        setForm(res.data);
-      } catch {
-        toast.error("Failed to load profile");
+        setForm(res.data || {});
+      } catch (err) {
+        toast.error(getErrorMessage(err));
       } finally {
         setLoading(false);
       }
     };
+
     fetch();
   }, []);
 
   const handleUpdate = async () => {
     try {
-      setLoading(true);
+      setUpdating(true);
+
       await updateMyProfile(form);
-      toast.success("Profile updated");
-    } catch {
-      toast.error("Update failed");
+
+      toast.success("Profile updated successfully");
+    } catch (err) {
+      toast.error(getErrorMessage(err));
     } finally {
-      setLoading(false);
+      setUpdating(false);
     }
   };
 
@@ -48,10 +67,15 @@ function Profile() {
     if (!window.confirm("Delete account permanently?")) return;
 
     try {
+      setDeleting(true);
+
       await deleteMyProfile();
+
+      toast.success("Account deleted");
       logout();
-    } catch {
-      toast.error("Delete failed");
+    } catch (err) {
+      toast.error(getErrorMessage(err));
+      setDeleting(false);
     }
   };
 
@@ -63,11 +87,11 @@ function Profile() {
 
       <div className={styles.container}>
 
-     
         <div className={styles.card}>
           <h2 className={styles.heading}>My Profile</h2>
 
           <div className={styles.form}>
+
             <div className={styles.row}>
               <input
                 value={form.firstName || ""}
@@ -75,13 +99,16 @@ function Profile() {
                   setForm({ ...form, firstName: e.target.value })
                 }
                 className={styles.input}
+                placeholder="First Name"
               />
+
               <input
                 value={form.lastName || ""}
                 onChange={(e) =>
                   setForm({ ...form, lastName: e.target.value })
                 }
                 className={styles.input}
+                placeholder="Last Name"
               />
             </div>
 
@@ -97,19 +124,27 @@ function Profile() {
                 setForm({ ...form, phone: e.target.value })
               }
               className={styles.input}
+              placeholder="Phone Number"
             />
 
-            <button onClick={handleUpdate} className={styles.primaryBtn}>
-              Save Changes
+            <button
+              onClick={handleUpdate}
+              className={styles.primaryBtn}
+              disabled={updating}
+            >
+              {updating ? "Saving..." : "Save Changes"}
             </button>
 
-            <button onClick={handleDelete} className={styles.deleteBtn}>
-              Delete Account
+            <button
+              onClick={handleDelete}
+              className={styles.deleteBtn}
+              disabled={deleting}
+            >
+              {deleting ? "Deleting..." : "Delete Account"}
             </button>
           </div>
         </div>
 
-       
         <div className={styles.addressSection}>
           <AddressSection />
         </div>

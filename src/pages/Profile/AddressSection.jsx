@@ -9,6 +9,20 @@ import styles from "./Address.module.scss";
 import Loader from "../../components/common/Loader/Loader";
 import { toast } from "react-toastify";
 
+
+const getErrorMessage = (err) => {
+  if (typeof err.response?.data === "string") {
+    return err.response.data;
+  }
+
+  return (
+    err.response?.data?.message ||
+    err.response?.data?.error ||
+    err.message ||
+    "Something went wrong"
+  );
+};
+
 function AddressSection({ selectable = false, onSelect, allowAdd = true }) {
   const [addresses, setAddresses] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -37,13 +51,13 @@ function AddressSection({ selectable = false, onSelect, allowAdd = true }) {
       setAddresses(data);
 
       if (selectable && data.length) {
-        const defaultAddr = data.find(a => a.isDefault) || data[0];
+        const defaultAddr = data.find((a) => a.isDefault) || data[0];
         setSelectedAddress(defaultAddr.id);
         onSelect?.(defaultAddr.id);
       }
     } catch (err) {
       if (err.response?.status !== 404) {
-        toast.error("Failed to load addresses");
+        toast.error(getErrorMessage(err));
       }
       setAddresses([]);
     } finally {
@@ -64,12 +78,15 @@ function AddressSection({ selectable = false, onSelect, allowAdd = true }) {
   const handleDelete = async (id) => {
     try {
       setActionLoading(id);
-      setAddresses(prev => prev.filter(a => a.id !== id));
+
+      setAddresses((prev) => prev.filter((a) => a.id !== id));
+
       await deleteAddress(id);
-      toast.success("Deleted");
-    } catch {
-      toast.error("Delete failed");
-      fetchAddresses();
+
+      toast.success("Address deleted");
+    } catch (err) {
+      toast.error(getErrorMessage(err));
+      fetchAddresses(); 
     } finally {
       setActionLoading(null);
     }
@@ -78,13 +95,16 @@ function AddressSection({ selectable = false, onSelect, allowAdd = true }) {
   const handleDefault = async (id) => {
     try {
       setActionLoading(id);
-      setAddresses(prev =>
-        prev.map(a => ({ ...a, isDefault: a.id === id }))
+
+      setAddresses((prev) =>
+        prev.map((a) => ({ ...a, isDefault: a.id === id }))
       );
+
       await setDefaultAddress(id);
-      toast.success("Default updated");
-    } catch {
-      toast.error("Failed");
+
+      toast.success("Default address updated");
+    } catch (err) {
+      toast.error(getErrorMessage(err));
       fetchAddresses();
     } finally {
       setActionLoading(null);
@@ -94,15 +114,17 @@ function AddressSection({ selectable = false, onSelect, allowAdd = true }) {
   const handleAdd = async () => {
     try {
       setActionLoading("add");
+
       await addAddress(newAddress);
+
       toast.success("Address added");
 
       setShowModal(false);
-      setNewAddress(initialState); 
+      setNewAddress(initialState);
 
       fetchAddresses();
-    } catch {
-      toast.error("Failed to add address");
+    } catch (err) {
+      toast.error(getErrorMessage(err));
     } finally {
       setActionLoading(null);
     }
@@ -126,13 +148,15 @@ function AddressSection({ selectable = false, onSelect, allowAdd = true }) {
       </div>
 
       <div className={styles.grid}>
-        {addresses.map(addr => {
+        {addresses.map((addr) => {
           const isSelected = selectedAddress === addr.id;
 
           return (
             <div
               key={addr.id}
-              className={`${styles.card} ${isSelected ? styles.selected : ""}`}
+              className={`${styles.card} ${
+                isSelected ? styles.selected : ""
+              }`}
               onClick={() => handleSelect(addr.id)}
             >
               <div className={styles.top}>
@@ -163,7 +187,9 @@ function AddressSection({ selectable = false, onSelect, allowAdd = true }) {
                 >
                   {!addr.isDefault && (
                     <button onClick={() => handleDefault(addr.id)}>
-                      Set Default
+                      {actionLoading === addr.id
+                        ? "Updating..."
+                        : "Set Default"}
                     </button>
                   )}
 
@@ -171,7 +197,9 @@ function AddressSection({ selectable = false, onSelect, allowAdd = true }) {
                     className={styles.delete}
                     onClick={() => handleDelete(addr.id)}
                   >
-                    Delete
+                    {actionLoading === addr.id
+                      ? "Deleting..."
+                      : "Delete"}
                   </button>
                 </div>
               )}
@@ -180,7 +208,6 @@ function AddressSection({ selectable = false, onSelect, allowAdd = true }) {
         })}
       </div>
 
-    
       {showModal && (
         <div className={styles.modal}>
           <div className={styles.modalContent}>
@@ -200,7 +227,10 @@ function AddressSection({ selectable = false, onSelect, allowAdd = true }) {
                 <input
                   value={newAddress[key]}
                   onChange={(e) =>
-                    setNewAddress({ ...newAddress, [key]: e.target.value })
+                    setNewAddress({
+                      ...newAddress,
+                      [key]: e.target.value,
+                    })
                   }
                 />
               </div>
@@ -214,10 +244,15 @@ function AddressSection({ selectable = false, onSelect, allowAdd = true }) {
                     key={type}
                     type="button"
                     className={`${styles.typeBtn} ${
-                      newAddress.addressType === type ? styles.active : ""
+                      newAddress.addressType === type
+                        ? styles.active
+                        : ""
                     }`}
                     onClick={() =>
-                      setNewAddress({ ...newAddress, addressType: type })
+                      setNewAddress({
+                        ...newAddress,
+                        addressType: type,
+                      })
                     }
                   >
                     {type}
@@ -230,7 +265,9 @@ function AddressSection({ selectable = false, onSelect, allowAdd = true }) {
               <button onClick={handleAdd}>
                 {actionLoading === "add" ? "Saving..." : "Save"}
               </button>
-              <button onClick={() => setShowModal(false)}>Cancel</button>
+              <button onClick={() => setShowModal(false)}>
+                Cancel
+              </button>
             </div>
           </div>
         </div>

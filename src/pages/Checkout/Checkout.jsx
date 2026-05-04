@@ -67,8 +67,16 @@ function Checkout() {
 
       toast.success("Order placed successfully 🎉");
       navigate("/orders");
-    } catch {
-      toast.error("Failed to place order");
+    } catch (err) {
+      const message =
+        typeof err.response?.data === "string"
+          ? err.response.data
+          : err.response?.data?.message ||
+          err.response?.data?.error ||
+          err.message ||
+          "Failed to place order";
+
+      toast.error(message);
     } finally {
       setPlacing(false);
     }
