@@ -115,7 +115,7 @@ function ProductDetails() {
 
             <p className={styles.brand}>{product.brand}</p>
 
-            {/* PRICE */}
+            
             <div className={styles.priceSection}>
               <span className={styles.price}>
                 ₹{Number(product.discountedPrice).toLocaleString()}

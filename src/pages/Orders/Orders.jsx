@@ -40,50 +40,58 @@ function Orders() {
           </div>
         ) : (
           <div className={styles.list}>
-            {orders.map((order) => (
-              <div key={order.orderId} className={styles.card}>
+            {orders.map((order) => {
+              const product = order.product || {};
+              const address = order.address || {};
+              const status = order.orderStatus?.toLowerCase() || "created";
 
+              return (
+                <div key={order.orderId} className={styles.card}>
+                  
+                  <img
+                    src={product.imageUrl || "/placeholder.png"}
+                    alt={product.name || "Product"}
+                    className={styles.image}
+                  />
 
-                <img
-                  src={order.product?.imageUrl || "/placeholder.png"}
-                  alt={order.product?.name || "Product"}
-                  className={styles.image}
-                />
+                  <div className={styles.details}>
+                    <h3>{product.name || "Unknown Product"}</h3>
 
-                <div className={styles.details}>
-                  <h3>{order.product?.name || "Unknown Product"}</h3>
+                    <p className={styles.meta}>
+                      Qty: {order.quantity} • ₹{order.totalAmount}
+                    </p>
 
-                  <p className={styles.meta}>
-                    Qty: {order.quantity} • ₹{order.totalAmount}
-                  </p>
+                    <p className={styles.date}>
+                      {order.createdAt
+                        ? new Date(order.createdAt).toLocaleDateString()
+                        : "Date unavailable"}
+                    </p>
 
-                  <p className={styles.date}>
-                    Ordered on:{" "}
-                    {new Date(order.createdAt).toLocaleDateString()}
-                  </p>
+                    <p className={styles.address}>
+                      {address.street && address.city
+                        ? `${address.street}, ${address.city}`
+                        : "Address unavailable"}
+                    </p>
+                  </div>
 
-                  <div className={styles.address}>
-                    {order.address ? (
-                      <>
-                        {order.address.street}, {order.address.city}
-                      </>
-                    ) : (
-                      "Address unavailable"
-                    )}
+                  <div className={styles.right}>
+                    
+                    <span className={styles.price}>
+                      ₹{order.totalAmount}
+                    </span>
+
+                    <span
+                      className={`${styles.status} ${
+                        styles[status] || styles.created
+                      }`}
+                    >
+                      {order.orderStatus}
+                    </span>
+
                   </div>
                 </div>
-
-                <div className={styles.right}>
-                  <span
-                    className={`${styles.status} ${styles[order.orderStatus.toLowerCase()]
-                      }`}
-                  >
-                    {order.orderStatus}
-                  </span>
-                </div>
-
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </div>
