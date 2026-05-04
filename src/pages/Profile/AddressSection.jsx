@@ -16,7 +16,7 @@ function AddressSection({ selectable = false, onSelect, allowAdd = true }) {
   const [showModal, setShowModal] = useState(false);
   const [selectedAddress, setSelectedAddress] = useState(null);
 
-  const [newAddress, setNewAddress] = useState({
+  const initialState = {
     street: "",
     city: "",
     state: "",
@@ -26,7 +26,9 @@ function AddressSection({ selectable = false, onSelect, allowAdd = true }) {
     landmark: "",
     addressType: "HOME",
     isDefault: false,
-  });
+  };
+
+  const [newAddress, setNewAddress] = useState(initialState);
 
   const fetchAddresses = async () => {
     try {
@@ -94,7 +96,10 @@ function AddressSection({ selectable = false, onSelect, allowAdd = true }) {
       setActionLoading("add");
       await addAddress(newAddress);
       toast.success("Address added");
+
       setShowModal(false);
+      setNewAddress(initialState); 
+
       fetchAddresses();
     } catch {
       toast.error("Failed to add address");
@@ -131,9 +136,7 @@ function AddressSection({ selectable = false, onSelect, allowAdd = true }) {
               onClick={() => handleSelect(addr.id)}
             >
               <div className={styles.top}>
-                <span className={styles.type}>
-                  {addr.addressType}
-                </span>
+                <span className={styles.type}>{addr.addressType}</span>
 
                 <div className={styles.badges}>
                   {addr.isDefault && (
@@ -177,60 +180,50 @@ function AddressSection({ selectable = false, onSelect, allowAdd = true }) {
         })}
       </div>
 
-
+    
       {showModal && (
         <div className={styles.modal}>
           <div className={styles.modalContent}>
             <h3>Add Address</h3>
 
-            <div className={styles.field}>
-              <label>Street <span>*</span></label>
-              <input onChange={(e) => setNewAddress({ ...newAddress, street: e.target.value })} />
-            </div>
-
-            <div className={styles.field}>
-              <label>Landmark <span>*</span></label>
-              <input onChange={(e) => setNewAddress({ ...newAddress, landmark: e.target.value })} />
-            </div>
-
-            <div className={styles.field}>
-              <label>City <span>*</span></label>
-              <input onChange={(e) => setNewAddress({ ...newAddress, city: e.target.value })} />
-            </div>
-
-            <div className={styles.field}>
-              <label>State</label>
-              <input onChange={(e) => setNewAddress({ ...newAddress, state: e.target.value })} />
-            </div>
-
-            <div className={styles.field}>
-              <label>Country</label>
-              <input onChange={(e) => setNewAddress({ ...newAddress, country: e.target.value })} />
-            </div>
-
-            <div className={styles.field}>
-              <label>Pincode <span>*</span></label>
-              <input onChange={(e) => setNewAddress({ ...newAddress, pincode: e.target.value })} />
-            </div>
-
-            <div className={styles.field}>
-              <label>Phone <span>*</span></label>
-              <input onChange={(e) => setNewAddress({ ...newAddress, phone: e.target.value })} />
-            </div>
-
+            {[
+              ["street", "Street *"],
+              ["landmark", "Landmark *"],
+              ["city", "City *"],
+              ["state", "State"],
+              ["country", "Country"],
+              ["pincode", "Pincode *"],
+              ["phone", "Phone *"],
+            ].map(([key, label]) => (
+              <div key={key} className={styles.field}>
+                <label>{label}</label>
+                <input
+                  value={newAddress[key]}
+                  onChange={(e) =>
+                    setNewAddress({ ...newAddress, [key]: e.target.value })
+                  }
+                />
+              </div>
+            ))}
 
             <div className={styles.field}>
               <label>Address Type</label>
-              <select
-                value={newAddress.addressType}
-                onChange={(e) =>
-                  setNewAddress({ ...newAddress, addressType: e.target.value })
-                }
-              >
-                <option value="HOME">Home</option>
-                <option value="WORK">Work</option>
-                <option value="OTHER">Other</option>
-              </select>
+              <div className={styles.typeSelector}>
+                {["HOME", "WORK", "OTHER"].map((type) => (
+                  <button
+                    key={type}
+                    type="button"
+                    className={`${styles.typeBtn} ${
+                      newAddress.addressType === type ? styles.active : ""
+                    }`}
+                    onClick={() =>
+                      setNewAddress({ ...newAddress, addressType: type })
+                    }
+                  >
+                    {type}
+                  </button>
+                ))}
+              </div>
             </div>
 
             <div className={styles.modalActions}>

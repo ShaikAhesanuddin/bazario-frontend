@@ -2,37 +2,40 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 12px 24px;
+  gap: 10px;
+  padding: 10px 16px;
   background: #ffffff;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid #e5e7eb;
   position: sticky;
   top: 0;
   z-index: 100;
 }
 
-
 .logo {
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 700;
   color: #0f172a;
   cursor: pointer;
+  white-space: nowrap;
 }
 
 .searchBox {
   display: flex;
   align-items: center;
-  width: 40%;
+  flex: 1;
+  max-width: 420px;
   background: #f8fafc;
-  border: 1px solid #e2e8f0;
+  border: 1px solid #e5e7eb;
   border-radius: 8px;
   overflow: hidden;
 
   input {
     flex: 1;
-    padding: 10px;
+    padding: 9px 10px;
     border: none;
     background: transparent;
-    font-size: 14px;
+    font-size: 13.5px;
+    min-width: 0;
 
     &:focus {
       outline: none;
@@ -40,35 +43,51 @@
   }
 
   button {
-    padding: 10px 14px;
+    padding: 9px 10px;
     border: none;
     background: #f97316;
     color: white;
     cursor: pointer;
+    transition: background 0.2s ease, transform 0.1s ease;
+
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
 
     &:hover {
       background: #ea580c;
     }
+
+    &:active {
+      transform: scale(0.96);
+    }
   }
 }
-
 
 .actions {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 10px;
 }
 
 .loginBtn {
-  padding: 8px 16px;
+  padding: 6px 12px;
   border: none;
   background: #f97316;
   color: white;
-  border-radius: 8px;
+  border-radius: 6px;
+  font-size: 12.5px;
   cursor: pointer;
+  transition: background 0.2s ease, transform 0.1s ease;
+
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
 
   &:hover {
     background: #ea580c;
+  }
+
+  &:active {
+    transform: scale(0.96);
   }
 }
 
@@ -77,8 +96,8 @@
 }
 
 .avatar {
-  width: 36px;
-  height: 36px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
   background: #f97316;
   color: white;
@@ -86,24 +105,34 @@
   align-items: center;
   justify-content: center;
   font-weight: 600;
+  font-size: 12.5px;
   cursor: pointer;
+
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+
+  &:active {
+    transform: scale(0.95);
+  }
 }
 
 .dropdown {
   position: absolute;
-  top: 45px;
+  top: 40px;
   right: 0;
   width: 150px;
   background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 10px;
-  box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08);
   overflow: hidden;
+  animation: fadeIn 0.15s ease;
 
   div {
-    padding: 10px 14px;
-    font-size: 14px;
+    padding: 9px 12px;
+    font-size: 13px;
     cursor: pointer;
+    transition: background 0.2s ease;
 
     &:hover {
       background: #f8fafc;
@@ -111,8 +140,62 @@
   }
 }
 
-@media (max-width: 768px) {
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 900px) {
   .searchBox {
-    display: none;
+    max-width: 260px;
+  }
+}
+
+@media (max-width: 768px) {
+  .navbar {
+    padding: 8px 10px;
+    gap: 8px;
+  }
+
+  .logo {
+    font-size: 16px;
+  }
+
+  .searchBox {
+    max-width: none;
+  }
+
+  .searchBox input {
+    font-size: 12.5px;
+    padding: 7px 8px;
+  }
+
+  .searchBox button {
+    padding: 7px 8px;
+  }
+
+  .loginBtn {
+    padding: 5px 8px;
+    font-size: 11.5px;
+  }
+}
+
+@media (hover: none) {
+  .loginBtn:hover {
+    background: #f97316;
+  }
+
+  .searchBox button:hover {
+    background: #f97316;
+  }
+
+  .dropdown div:hover {
+    background: transparent;
   }
 }

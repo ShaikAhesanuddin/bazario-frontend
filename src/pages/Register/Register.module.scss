@@ -3,43 +3,44 @@
   justify-content: center;
   align-items: center;
   min-height: 100vh;
+  padding: 20px;
 
   background: linear-gradient(135deg, #f8fafc, #eef2ff);
 }
 
-
 .card {
-  width: 400px;
-  padding: 32px;
+  width: 100%;
+  max-width: 360px; 
+  padding: 26px;
   background: #ffffff;
-  border-radius: 16px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
   text-align: center;
 }
 
 .logo {
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 700;
   color: #0f172a;
-  margin-bottom: 10px;
+  margin-bottom: 6px;
 }
 
 .heading {
-  font-size: 24px;
+  font-size: 20px;
   font-weight: 600;
   color: #0f172a;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
 }
 
 .form {
   display: flex;
   flex-direction: column;
+  gap: 10px;
 }
 
 .row {
   display: flex;
-  gap: 10px;
-  margin-bottom: 16px;
+  gap: 8px;
 
   input {
     flex: 1;
@@ -48,36 +49,40 @@
 
 .input {
   width: 100%;
-  padding: 12px 14px;
-  margin-bottom: 16px;
-  border: 1px solid #e2e8f0;
-  border-radius: 10px;
-  font-size: 14px;
-  transition: all 0.2s ease;
+  padding: 11px 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 13.5px;
+  transition: border 0.2s ease, box-shadow 0.2s ease;
 
   &:focus {
     border-color: #f97316;
     outline: none;
-    box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.15);
+    box-shadow: 0 0 0 2px rgba(249, 115, 22, 0.12);
   }
 }
 
 .button {
   width: 100%;
-  padding: 12px;
+  padding: 11px;
   background: #f97316;
   color: #ffffff;
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 600;
   border: none;
-  border-radius: 10px;
+  border-radius: 8px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: background 0.2s ease, transform 0.1s ease;
+
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
 
   &:hover {
     background: #ea580c;
-    transform: translateY(-1px);
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+  }
+
+  &:active {
+    transform: scale(0.97);
   }
 
   &:disabled {
@@ -87,15 +92,14 @@
 }
 
 .secureText {
-  margin-top: 12px;
-  font-size: 13px;
+  margin-top: 8px;
+  font-size: 12.5px;
   color: #64748b;
 }
 
-
 .text {
-  margin-top: 16px;
-  font-size: 14px;
+  margin-top: 12px;
+  font-size: 13px;
   color: #64748b;
 }
 
@@ -110,8 +114,8 @@
 }
 
 .spinnerSmall {
-  width: 18px;
-  height: 18px;
+  width: 16px;
+  height: 16px;
   border: 2px solid #fff;
   border-top: 2px solid transparent;
   border-radius: 50%;
@@ -122,5 +126,40 @@
 @keyframes spin {
   to {
     transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 480px) {
+  .card {
+    padding: 20px;
+    border-radius: 10px;
+  }
+
+  .heading {
+    font-size: 18px;
+  }
+
+  .input {
+    font-size: 13px;
+    padding: 10px;
+  }
+
+  .button {
+    font-size: 13.5px;
+    padding: 10px;
+  }
+
+  .row {
+    flex-direction: column; 
+  }
+}
+
+@media (hover: none) {
+  .button:hover {
+    background: #f97316;
+  }
+
+  .link:hover {
+    text-decoration: none;
   }
 }

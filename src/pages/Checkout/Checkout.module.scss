@@ -4,76 +4,80 @@
 }
 
 .container {
-  max-width: 1100px;
-  margin: auto;
-  padding: 40px 20px;
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 32px 16px;
 }
 
 .heading {
-  font-size: 26px;
+  font-size: 22px;
   font-weight: 600;
-  margin-bottom: 24px;
+  margin-bottom: 20px;
+  color: #0f172a;
 }
-
 
 .layout {
   display: grid;
-  grid-template-columns: 1.5fr 1fr;
-  gap: 28px;
+  grid-template-columns: 1.6fr 1fr;
+  gap: 20px;
 }
 
 .left {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 16px;
 }
-
 
 .card {
   display: flex;
-  gap: 16px;
+  gap: 12px;
   background: #fff;
-  padding: 16px;
-  border-radius: 12px;
+  padding: 12px;
+  border-radius: 10px;
   align-items: center;
-  border: 1px solid #eee;
+  border: 1px solid #e5e7eb;
 
   img {
-    width: 100px;
-    height: 100px;
+    width: 88px;
+    height: 88px;
     object-fit: contain;
+    border-radius: 6px;
+    background: #f8fafc;
   }
 
   h3 {
-    margin-bottom: 4px;
-    font-size: 16px;
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 2px;
+    color: #0f172a;
   }
 
   p {
+    font-size: 12.5px;
     color: #64748b;
-    font-size: 14px;
   }
 }
 
 .price {
   color: #f97316;
   font-weight: 600;
-  margin-top: 4px;
+  font-size: 14px;
+  margin-top: 2px;
 }
 
 .section {
   background: #fff;
-  padding: 20px;
-  border-radius: 12px;
-  border: 1px solid #eee;
+  padding: 16px;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
 
   h3 {
-    margin-bottom: 12px;
-    font-size: 16px;
+    margin-bottom: 10px;
+    font-size: 14px;
     font-weight: 600;
+    color: #0f172a;
   }
 }
-
 
 .sectionHeader {
   display: flex;
@@ -84,37 +88,36 @@
 .selectedBanner {
   background: #ecfeff;
   color: #0e7490;
-  padding: 10px 12px;
-  border-radius: 8px;
-  font-size: 14px;
-  margin-bottom: 12px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  font-size: 12.5px;
+  margin-bottom: 10px;
   border: 1px solid #cffafe;
 }
 
 .paymentBox {
-  padding: 12px;
+  padding: 10px;
   background: #f1f5f9;
-  border-radius: 8px;
+  border-radius: 6px;
   font-weight: 500;
-  font-size: 14px;
+  font-size: 13px;
 }
 
 .right {
   position: sticky;
-  top: 90px;
+  top: 80px;
   height: fit-content;
 }
 
-
 .summaryBox {
   background: #fff;
-  padding: 22px;
-  border-radius: 12px;
-  border: 1px solid #eee;
+  padding: 18px;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
 
   h3 {
-    margin-bottom: 16px;
-    font-size: 18px;
+    margin-bottom: 14px;
+    font-size: 16px;
     font-weight: 600;
   }
 }
@@ -122,36 +125,40 @@
 .row {
   display: flex;
   justify-content: space-between;
-  margin: 10px 0;
+  margin: 8px 0;
+  font-size: 13px;
   color: #475569;
-  font-size: 14px;
 }
 
 .totalRow {
   display: flex;
   justify-content: space-between;
   font-weight: 700;
-  margin-top: 16px;
-  font-size: 17px;
-  border-top: 1px solid #eee;
-  padding-top: 10px;
+  margin-top: 12px;
+  font-size: 15px;
+  border-top: 1px solid #e5e7eb;
+  padding-top: 8px;
 }
 
 .placeBtn {
   width: 100%;
-  margin-top: 20px;
-  padding: 14px;
+  margin-top: 16px;
+  padding: 12px;
   background: #f97316;
   color: white;
   border: none;
-  border-radius: 10px;
-  font-size: 15px;
+  border-radius: 8px;
+  font-size: 14px;
   font-weight: 600;
   cursor: pointer;
-  transition: 0.2s ease;
+  transition: background 0.2s ease, transform 0.1s ease;
 
   &:hover {
     background: #ea580c;
+  }
+
+  &:active {
+    transform: scale(0.98);
   }
 
   &:disabled {
@@ -160,7 +167,8 @@
   }
 }
 
-@media (max-width: 768px) {
+
+@media (max-width: 1024px) {
   .layout {
     grid-template-columns: 1fr;
   }
@@ -168,14 +176,43 @@
   .right {
     position: static;
   }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 20px 12px;
+  }
+
+  .heading {
+    font-size: 20px;
+  }
 
   .card {
-    flex-direction: column;
     align-items: flex-start;
 
     img {
-      width: 80px;
-      height: 80px;
+      width: 72px;
+      height: 72px;
     }
+  }
+
+  .summaryBox {
+    padding: 14px;
+  }
+
+  .placeBtn {
+    padding: 11px;
+    font-size: 13.5px;
+  }
+}
+
+@media (max-width: 480px) {
+  .row,
+  .totalRow {
+    font-size: 12.5px;
+  }
+
+  .placeBtn {
+    font-size: 13px;
   }
 }
