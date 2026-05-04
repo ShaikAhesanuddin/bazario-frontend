@@ -1,5 +1,6 @@
 .page {
   background: #f8fafc;
+  min-height: 100vh;
 }
 
 .container {
@@ -10,14 +11,15 @@
 
 .heading {
   font-size: 26px;
-  margin-bottom: 20px;
+  font-weight: 600;
+  margin-bottom: 24px;
 }
 
 
 .layout {
   display: grid;
   grid-template-columns: 1.5fr 1fr;
-  gap: 30px;
+  gap: 28px;
 }
 
 .left {
@@ -26,67 +28,114 @@
   gap: 20px;
 }
 
+
 .card {
   display: flex;
   gap: 16px;
-  background: white;
+  background: #fff;
   padding: 16px;
   border-radius: 12px;
+  align-items: center;
+  border: 1px solid #eee;
 
   img {
     width: 100px;
     height: 100px;
     object-fit: contain;
   }
+
+  h3 {
+    margin-bottom: 4px;
+    font-size: 16px;
+  }
+
+  p {
+    color: #64748b;
+    font-size: 14px;
+  }
 }
 
 .price {
   color: #f97316;
   font-weight: 600;
+  margin-top: 4px;
 }
-
 
 .section {
-  background: white;
-  padding: 16px;
+  background: #fff;
+  padding: 20px;
   border-radius: 12px;
+  border: 1px solid #eee;
+
+  h3 {
+    margin-bottom: 12px;
+    font-size: 16px;
+    font-weight: 600;
+  }
 }
 
+
+.sectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.selectedBanner {
+  background: #ecfeff;
+  color: #0e7490;
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  margin-bottom: 12px;
+  border: 1px solid #cffafe;
+}
 
 .paymentBox {
   padding: 12px;
   background: #f1f5f9;
   border-radius: 8px;
+  font-weight: 500;
+  font-size: 14px;
 }
-
 
 .right {
   position: sticky;
-  top: 80px;
+  top: 90px;
   height: fit-content;
 }
 
 
 .summaryBox {
-  background: white;
-  padding: 20px;
+  background: #fff;
+  padding: 22px;
   border-radius: 12px;
+  border: 1px solid #eee;
+
+  h3 {
+    margin-bottom: 16px;
+    font-size: 18px;
+    font-weight: 600;
+  }
 }
 
 .row {
   display: flex;
   justify-content: space-between;
   margin: 10px 0;
+  color: #475569;
+  font-size: 14px;
 }
 
 .totalRow {
   display: flex;
   justify-content: space-between;
-  font-weight: bold;
+  font-weight: 700;
   margin-top: 16px;
-  font-size: 18px;
+  font-size: 17px;
+  border-top: 1px solid #eee;
+  padding-top: 10px;
 }
-
 
 .placeBtn {
   width: 100%;
@@ -96,8 +145,10 @@
   color: white;
   border: none;
   border-radius: 10px;
-  font-size: 16px;
+  font-size: 15px;
+  font-weight: 600;
   cursor: pointer;
+  transition: 0.2s ease;
 
   &:hover {
     background: #ea580c;
@@ -105,9 +156,9 @@
 
   &:disabled {
     opacity: 0.6;
+    cursor: not-allowed;
   }
 }
-
 
 @media (max-width: 768px) {
   .layout {
@@ -116,5 +167,15 @@
 
   .right {
     position: static;
+  }
+
+  .card {
+    flex-direction: column;
+    align-items: flex-start;
+
+    img {
+      width: 80px;
+      height: 80px;
+    }
   }
 }

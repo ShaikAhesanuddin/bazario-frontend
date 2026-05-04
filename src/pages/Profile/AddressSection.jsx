@@ -9,7 +9,7 @@ import styles from "./Address.module.scss";
 import Loader from "../../components/common/Loader/Loader";
 import { toast } from "react-toastify";
 
-function AddressSection({ selectable = false, onSelect }) {
+function AddressSection({ selectable = false, onSelect, allowAdd = true }) {
   const [addresses, setAddresses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState(null);
@@ -29,86 +29,40 @@ function AddressSection({ selectable = false, onSelect }) {
   });
 
   const fetchAddresses = async () => {
-  try {
-    const res = await getAddresses();
+    try {
+      const res = await getAddresses();
+      const data = res.data || [];
+      setAddresses(data);
 
-    setAddresses(res.data || []);
-  } catch (err) {
-
-    if (err.response?.status !== 404) {
-      toast.error("Failed to load addresses");
+      if (selectable && data.length) {
+        const defaultAddr = data.find(a => a.isDefault) || data[0];
+        setSelectedAddress(defaultAddr.id);
+        onSelect?.(defaultAddr.id);
+      }
+    } catch (err) {
+      if (err.response?.status !== 404) {
+        toast.error("Failed to load addresses");
+      }
+      setAddresses([]);
+    } finally {
+      setLoading(false);
     }
-
-    setAddresses([]);
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
   useEffect(() => {
     fetchAddresses();
   }, []);
 
-  const validate = () => {
-    if (
-      !newAddress.street ||
-      !newAddress.city ||
-      !newAddress.pincode ||
-      !newAddress.phone ||
-      !newAddress.landmark
-    ) {
-      toast.error("Please fill all required fields");
-      return false;
-    }
-
-    if (!/^\d{6}$/.test(newAddress.pincode)) {
-      toast.error("Invalid pincode");
-      return false;
-    }
-
-    if (!/^[6-9]\d{9}$/.test(newAddress.phone)) {
-      toast.error("Invalid phone number");
-      return false;
-    }
-
-    return true;
-  };
-
-  const handleAdd = async () => {
-    if (!validate()) return;
-
-    try {
-      setActionLoading("add");
-
-      await addAddress(newAddress);
-
-      toast.success("Address added");
-      setShowModal(false);
-
-      setNewAddress({
-        street: "",
-        city: "",
-        state: "",
-        country: "",
-        pincode: "",
-        phone: "",
-        landmark: "",
-        addressType: "HOME",
-        isDefault: false,
-      });
-
-      fetchAddresses();
-    } catch {
-      toast.error("Failed to add address");
-    } finally {
-      setActionLoading(null);
-    }
+  const handleSelect = (id) => {
+    if (!selectable) return;
+    setSelectedAddress(id);
+    onSelect?.(id);
   };
 
   const handleDelete = async (id) => {
     try {
       setActionLoading(id);
-      setAddresses((prev) => prev.filter((a) => a.id !== id));
+      setAddresses(prev => prev.filter(a => a.id !== id));
       await deleteAddress(id);
       toast.success("Deleted");
     } catch {
@@ -122,8 +76,8 @@ function AddressSection({ selectable = false, onSelect }) {
   const handleDefault = async (id) => {
     try {
       setActionLoading(id);
-      setAddresses((prev) =>
-        prev.map((a) => ({ ...a, isDefault: a.id === id }))
+      setAddresses(prev =>
+        prev.map(a => ({ ...a, isDefault: a.id === id }))
       );
       await setDefaultAddress(id);
       toast.success("Default updated");
@@ -135,13 +89,17 @@ function AddressSection({ selectable = false, onSelect }) {
     }
   };
 
-  const handleSelect = (id) => {
-    if (!selectable) return;
-
-    setSelectedAddress(id);
-
-    if (onSelect) {
-      onSelect(id);
+  const handleAdd = async () => {
+    try {
+      setActionLoading("add");
+      await addAddress(newAddress);
+      toast.success("Address added");
+      setShowModal(false);
+      fetchAddresses();
+    } catch {
+      toast.error("Failed to add address");
+    } finally {
+      setActionLoading(null);
     }
   };
 
@@ -149,163 +107,137 @@ function AddressSection({ selectable = false, onSelect }) {
 
   return (
     <div className={styles.wrapper}>
-      
       <div className={styles.header}>
         <h3>My Addresses</h3>
 
-        {!selectable && (
+        {allowAdd && (
           <button
-            onClick={() => setShowModal(true)}
             className={styles.addBtn}
+            onClick={() => setShowModal(true)}
           >
             + Add Address
           </button>
         )}
       </div>
 
-      {!addresses.length && (
-        <div className={styles.emptyState}>
-          <p>No addresses added yet</p>
-        </div>
-      )}
-
       <div className={styles.grid}>
-        {addresses.map((addr) => (
-          <div
-            key={addr.id}
-            className={`${styles.card} ${
-              selectable && selectedAddress === addr.id
-                ? styles.selected
-                : ""
-            }`}
-            onClick={() => handleSelect(addr.id)}
-          >
-            <div className={styles.top}>
-              <span className={styles.type}>{addr.addressType}</span>
-              {addr.isDefault && (
-                <span className={styles.default}>Default</span>
+        {addresses.map(addr => {
+          const isSelected = selectedAddress === addr.id;
+
+          return (
+            <div
+              key={addr.id}
+              className={`${styles.card} ${isSelected ? styles.selected : ""}`}
+              onClick={() => handleSelect(addr.id)}
+            >
+              <div className={styles.top}>
+                <span className={styles.type}>
+                  {addr.addressType}
+                </span>
+
+                <div className={styles.badges}>
+                  {addr.isDefault && (
+                    <span className={styles.default}>Default</span>
+                  )}
+                  {isSelected && (
+                    <span className={styles.selectedTag}>Selected</span>
+                  )}
+                </div>
+              </div>
+
+              <div className={styles.text}>
+                <p>{addr.street}</p>
+                <p>{addr.landmark}</p>
+                <p>{addr.city}, {addr.state}</p>
+                <p>{addr.country} - {addr.pincode}</p>
+                <p>📞 {addr.phone}</p>
+              </div>
+
+              {!selectable && (
+                <div
+                  className={styles.actions}
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  {!addr.isDefault && (
+                    <button onClick={() => handleDefault(addr.id)}>
+                      Set Default
+                    </button>
+                  )}
+
+                  <button
+                    className={styles.delete}
+                    onClick={() => handleDelete(addr.id)}
+                  >
+                    Delete
+                  </button>
+                </div>
               )}
             </div>
-
-            <div className={styles.text}>
-              <p>{addr.street}</p>
-              <p>{addr.landmark}</p>
-              <p>
-                {addr.city}, {addr.state}
-              </p>
-              <p>
-                {addr.country} - {addr.pincode}
-              </p>
-              <p>📞 {addr.phone}</p>
-            </div>
-
-            {!selectable && (
-              <div className={styles.actions}>
-                {!addr.isDefault && (
-                  <button
-                    onClick={() => handleDefault(addr.id)}
-                    disabled={actionLoading === addr.id}
-                  >
-                    Set Default
-                  </button>
-                )}
-
-                <button
-                  className={styles.delete}
-                  onClick={() => handleDelete(addr.id)}
-                  disabled={actionLoading === addr.id}
-                >
-                  Delete
-                </button>
-              </div>
-            )}
-          </div>
-        ))}
+          );
+        })}
       </div>
 
-      {!selectable && showModal && (
+
+      {showModal && (
         <div className={styles.modal}>
           <div className={styles.modalContent}>
             <h3>Add Address</h3>
 
-            <input
-              placeholder="Street *"
-              onChange={(e) =>
-                setNewAddress({ ...newAddress, street: e.target.value })
-              }
-            />
-            <input
-              placeholder="Landmark *"
-              onChange={(e) =>
-                setNewAddress({ ...newAddress, landmark: e.target.value })
-              }
-            />
-            <input
-              placeholder="City *"
-              onChange={(e) =>
-                setNewAddress({ ...newAddress, city: e.target.value })
-              }
-            />
-            <input
-              placeholder="State"
-              onChange={(e) =>
-                setNewAddress({ ...newAddress, state: e.target.value })
-              }
-            />
-            <input
-              placeholder="Country"
-              onChange={(e) =>
-                setNewAddress({ ...newAddress, country: e.target.value })
-              }
-            />
-            <input
-              placeholder="Pincode *"
-              onChange={(e) =>
-                setNewAddress({ ...newAddress, pincode: e.target.value })
-              }
-            />
-            <input
-              placeholder="Phone *"
-              onChange={(e) =>
-                setNewAddress({ ...newAddress, phone: e.target.value })
-              }
-            />
+            <div className={styles.field}>
+              <label>Street <span>*</span></label>
+              <input onChange={(e) => setNewAddress({ ...newAddress, street: e.target.value })} />
+            </div>
 
-            <select
-              value={newAddress.addressType}
-              onChange={(e) =>
-                setNewAddress({
-                  ...newAddress,
-                  addressType: e.target.value,
-                })
-              }
-            >
-              <option value="HOME">Home</option>
-              <option value="WORK">Work</option>
-              <option value="OTHER">Other</option>
-            </select>
+            <div className={styles.field}>
+              <label>Landmark <span>*</span></label>
+              <input onChange={(e) => setNewAddress({ ...newAddress, landmark: e.target.value })} />
+            </div>
 
-            <label className={styles.checkbox}>
-              <input
-                type="checkbox"
-                checked={newAddress.isDefault}
+            <div className={styles.field}>
+              <label>City <span>*</span></label>
+              <input onChange={(e) => setNewAddress({ ...newAddress, city: e.target.value })} />
+            </div>
+
+            <div className={styles.field}>
+              <label>State</label>
+              <input onChange={(e) => setNewAddress({ ...newAddress, state: e.target.value })} />
+            </div>
+
+            <div className={styles.field}>
+              <label>Country</label>
+              <input onChange={(e) => setNewAddress({ ...newAddress, country: e.target.value })} />
+            </div>
+
+            <div className={styles.field}>
+              <label>Pincode <span>*</span></label>
+              <input onChange={(e) => setNewAddress({ ...newAddress, pincode: e.target.value })} />
+            </div>
+
+            <div className={styles.field}>
+              <label>Phone <span>*</span></label>
+              <input onChange={(e) => setNewAddress({ ...newAddress, phone: e.target.value })} />
+            </div>
+
+
+            <div className={styles.field}>
+              <label>Address Type</label>
+              <select
+                value={newAddress.addressType}
                 onChange={(e) =>
-                  setNewAddress({
-                    ...newAddress,
-                    isDefault: e.target.checked,
-                  })
+                  setNewAddress({ ...newAddress, addressType: e.target.value })
                 }
-              />
-              Set as default
-            </label>
+              >
+                <option value="HOME">Home</option>
+                <option value="WORK">Work</option>
+                <option value="OTHER">Other</option>
+              </select>
+            </div>
 
             <div className={styles.modalActions}>
               <button onClick={handleAdd}>
-                {actionLoading === "add" ? "Adding..." : "Save"}
+                {actionLoading === "add" ? "Saving..." : "Save"}
               </button>
-              <button onClick={() => setShowModal(false)}>
-                Cancel
-              </button>
+              <button onClick={() => setShowModal(false)}>Cancel</button>
             </div>
           </div>
         </div>

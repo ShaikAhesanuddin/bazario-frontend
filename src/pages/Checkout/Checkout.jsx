@@ -21,15 +21,16 @@ function Checkout() {
   const quantity = state?.quantity || 1;
   const productId = state?.productId;
 
+
   useEffect(() => {
     if (!productId) {
       toast.error("Invalid checkout");
       navigate("/");
     }
-  }, [productId]);
+  }, [productId, navigate]);
 
   useEffect(() => {
-    const fetch = async () => {
+    const fetchProduct = async () => {
       try {
         const res = await getProductById(productId);
         setProduct(res.data);
@@ -40,7 +41,7 @@ function Checkout() {
       }
     };
 
-    if (productId) fetch();
+    if (productId) fetchProduct();
   }, [productId]);
 
   const price = Number(product?.discountedPrice || product?.price || 0);
@@ -48,9 +49,10 @@ function Checkout() {
   const delivery = subtotal > 500 ? 0 : 40;
   const total = subtotal + delivery;
 
+
   const handlePlaceOrder = async () => {
     if (!selectedAddress) {
-      toast.error("Select address");
+      toast.error("Please select a delivery address");
       return;
     }
 
@@ -63,7 +65,7 @@ function Checkout() {
         addressId: selectedAddress,
       });
 
-      toast.success("Order placed 🎉");
+      toast.success("Order placed successfully 🎉");
       navigate("/orders");
     } catch {
       toast.error("Failed to place order");
@@ -86,10 +88,10 @@ function Checkout() {
 
           <div className={styles.left}>
 
+
             {product && (
               <div className={styles.card}>
                 <img src={product.imageUrl} alt={product.name} />
-
                 <div>
                   <h3>{product.name}</h3>
                   <p>{product.brand}</p>
@@ -100,15 +102,23 @@ function Checkout() {
               </div>
             )}
 
-
             <div className={styles.section}>
-              <h3>Select Delivery Address</h3>
+              <div className={styles.sectionHeader}>
+                <h3>Select Delivery Address</h3>
+              </div>
+
+              {selectedAddress && (
+                <div className={styles.selectedBanner}>
+                  🚚 This order will be delivered to the selected address
+                </div>
+              )}
+
               <AddressSection
                 selectable
+                allowAdd
                 onSelect={(id) => setSelectedAddress(id)}
               />
             </div>
-
 
             <div className={styles.section}>
               <h3>Payment Method</h3>
@@ -116,13 +126,11 @@ function Checkout() {
                 Cash on Delivery (COD)
               </div>
             </div>
-
           </div>
 
 
           <div className={styles.right}>
             <div className={styles.summaryBox}>
-
               <h3>Order Summary</h3>
 
               <div className={styles.row}>
